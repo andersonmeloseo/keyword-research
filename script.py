@@ -68,18 +68,27 @@ def group_by_intent(df):
 
 def filter_questions(df):
     """
-    Filtra as palavras-chave que parecem perguntas.
-    Consideramos termos como 'como', 'quando', 'por que', etc., ou contendo '?'.
+    Filtra as palavras-chave que parecem perguntas em Português, Inglês ou Espanhol.
+    Consideramos termos como 'como', 'quando', 'por que', 'what', 'when', etc., ou contendo '?'.
     """
-    question_words = ['como', 'quando', 'por que', 'porquê', 'qual', 'quais', 'onde', 'quem']
+    question_words = [
+        # Português
+        'como', 'quando', 'por que', 'porquê', 'qual', 'quais', 'onde', 'quem',
+        # Inglês
+        'what', 'when', 'where', 'why', 'how', 'who', 'which', 'whose',
+        # Espanhol
+        'cómo', 'cuándo', 'por qué', 'porqué', 'cuál', 'cuáles', 'dónde', 'quién'
+    ]
     def is_question(kw):
         kw_lower = kw.lower()
         if '?' in kw_lower:
             return True
         for w in question_words:
+            # Verifica se começa com a palavra + espaço (ex.: "como fazer...")
             if kw_lower.startswith(w + ' '):
                 return True
         return False
+    
     if 'Keyword' not in df.columns:
         return pd.DataFrame(columns=df.columns)
     return df[df['Keyword'].astype(str).apply(is_question)]
